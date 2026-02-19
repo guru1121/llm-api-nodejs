@@ -18,15 +18,25 @@ A simple REST API built with **Node.js** and **Express** that integrates with **
 
 - Node.js  
 - Express.js  
-- Gemini 2.5 Flash (Google Generative Language API)  
+- Google Gemini 2.5 Flash (Generative Language API)  
 - dotenv  
+- express-rate-limit  
 
 ---
 
 ## 📂 Project Structure
 
 .
-├── index.js
+├── src/
+│ ├── app.js
+│ ├── server.js
+│ ├── routes/
+│ │ └── chat.routes.js
+│ ├── services/
+│ │ └── gemini.service.js
+│ └── middleware/
+│ └── rateLimiter.js
+│
 ├── .env
 ├── package.json
 └── README.md
@@ -39,33 +49,56 @@ A simple REST API built with **Node.js** and **Express** that integrates with **
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/guru1121/llm-api-nodejs
 cd your-repo-name
 2️⃣ Install Dependencies
 npm install
 3️⃣ Setup Environment Variables
 Create a .env file in the root directory:
 
-GOOGLE_API_KEY=your_gemini_api_key_here
+GOOGLE_API_KEY=gemini_api_key_here
+PORT=3000
 ⚠️ Never commit your .env file.
+
 Add this to .gitignore:
 
+node_modules
 .env
 ▶️ Run the Server
-node index.js
-Server will start on:
+npm start
+Or if using nodemon:
+
+npm run dev
+Server will start at:
 
 http://localhost:3000
-📡 API Endpoint
+📡 API Endpoints
+🔹 Health Check
+GET /health
+Response:
+
+{
+  "status": "OK"
+}
+🔹 Chat Endpoint
 POST /chat
-Request Body
+Request Body:
+
 {
   "chat": "Explain JWT in simple terms"
 }
-Response
+Response:
+
 {
   "response": "JWT stands for JSON Web Token..."
 }
+
+🔐 Authentication
+The Gemini API key is securely sent using request headers:
+
+x-goog-api-key: YOUR_API_KEY
+The API key is never exposed in the URL.
+
 📊 Model Used
 gemini-2.5-flash
 
@@ -74,30 +107,36 @@ Free Tier Limits
 
 20 requests per day
 
+Rate limiting middleware is implemented to prevent quota exhaustion.
+
 ❗ Error Handling
-Returns 400 if chat field is missing
+Returns 400 for invalid or missing input
 
-Returns 500 if Gemini API fails
+Returns actual Gemini API status codes (e.g., 429)
 
-Handles API error responses gracefully
+Handles server errors gracefully
 
-🔐 Security Notes
-Store API key securely in .env
+🔒 Security Best Practices
+API key stored in .env
 
-Do not expose API key in frontend
+.env excluded from version control
 
-Add rate limiting in production
+Rate limiting applied to /chat
+
+Input validation implemented
 
 🚀 Future Improvements
-Add rate limiter middleware
+Add Swagger API documentation
 
-Implement chat history memory
+Implement chat memory
 
 Add streaming responses
 
-Add authentication (JWT)
+Add JWT authentication
 
-Deploy on AWS / Render / Railway
+Dockerize application
+
+Deploy to AWS / Render / Railway
 
 👨‍💻 Author
 Gurunand Mourya
